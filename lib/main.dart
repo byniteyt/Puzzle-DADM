@@ -80,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
         );
         break;
       case 1:
-        page = const GeneratorPage();
+        page = const Puzzle();
         break;
       case 2:
         page = const FavoritesPage();
@@ -172,7 +172,7 @@ class MainMenu extends StatelessWidget {
 }
 
 // Página generadora de palabras
-class GeneratorPage extends StatelessWidget {
+/*class GeneratorPage extends StatelessWidget {
   const GeneratorPage({super.key});
 
   @override
@@ -187,6 +187,77 @@ class GeneratorPage extends StatelessWidget {
           children: const [FavoriteIcon(), SizedBox(width: 20), NextButton()],
         ),
       ],
+    );
+  }
+}*/
+
+class Puzzle extends StatelessWidget {
+  const Puzzle({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Stack(
+        children: [
+          Image.asset('img/marco.PNG'),
+
+          Positioned(
+            left: 20,
+            top: 30,
+            child: Image.asset('img/bloque1.PNG'),
+          ),
+
+          Positioned(
+            left: 80,
+            top: 30,
+            child: Image.asset('img/bloque2.PNG'),
+          ),
+
+          Positioned(
+            left: 140,
+            top: 30,
+            child: Image.asset('img/bloque3.PNG'),
+          ),
+
+          Positioned(
+            left: 20,
+            top: 30,
+            child: Image.asset('img/bloque4.PNG'),
+          ),
+
+          Positioned(
+            left: 80,
+            top: 30,
+            child: Image.asset('img/bloque5.PNG'),
+          ),
+
+          Positioned(
+            left: 140,
+            top: 30,
+            child: Image.asset('img/bloque6.PNG'),
+          ),
+
+          Positioned(
+            left: 20,
+            top: 30,
+            child: Image.asset('img/bloque7.PNG'),
+          ),
+
+          Positioned(
+            left: 80,
+            top: 30,
+            child: Image.asset('img/bloque8.PNG'),
+          ),
+
+          Positioned(
+            left: 450,
+            top: 590,
+            child: Image.asset('img/bombilla.PNG'),
+            width: 150,
+            height: 150,
+          ),
+        ],
+      ),
     );
   }
 }
