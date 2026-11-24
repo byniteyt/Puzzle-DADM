@@ -200,20 +200,36 @@ class Puzzle extends StatefulWidget {
 
 class _PuzzleState extends State<Puzzle> {
 
+  // ==========================================
+  // SISTEMA DE COORDENADAS ORIGINAL
+  // ==========================================
+
+  static const double anchoReferencia = 800;
+  static const double altoReferencia = 700;
+
+  // ESCALA ACTUAL
+  double escala = 1;
+
+  // ==========================================
   // TAMAÑOS ORIGINALES
+  // ==========================================
+
   final List<Size> tamanos = [
     const Size(410, 460),
     const Size(500, 270),
     const Size(395, 260),
-    const Size(500, 415),
-    const Size(450, 265),
-    const Size(380, 270),
+    const Size(470, 385),
+    const Size(420, 235),
+    const Size(355, 240),
     const Size(390, 250),
     const Size(315, 260),
     const Size(140, 140),
   ];
 
+  // ==========================================
   // POSICIONES ORIGINALES
+  // ==========================================
+
   final List<Offset> posiciones = [
     const Offset(510, 405),
     const Offset(470, 260),
@@ -226,7 +242,10 @@ class _PuzzleState extends State<Puzzle> {
     const Offset(395, 620),
   ];
 
-  // NUEVE IMÁGENES
+  // ==========================================
+  // IMÁGENES
+  // ==========================================
+
   final List<String> imagenes = [
     'img/bloque1.PNG',
     'img/bloque2.PNG',
@@ -239,92 +258,127 @@ class _PuzzleState extends State<Puzzle> {
     'img/bombilla.PNG',
   ];
 
-  // CONTORNOS PERSONALIZADOS
-  // Coordenadas relativas: entre 0 y 1.
+  // ==========================================
+  // HITBOXES DE LOS BLOQUES
+  // ==========================================
+
   final List<List<Offset>> hitboxes = [
 
     // BLOQUE 1 ROJO
     [
-      const Offset(0.07, 0.25),
-      const Offset(0.34, 0.25),
-      const Offset(0.34, 0.49),
-      const Offset(0.64, 0.49),
-      const Offset(0.64, 0.25),
-      const Offset(0.93, 0.25),
-      const Offset(0.93, 0.73),
-      const Offset(0.07, 0.73),
+      Offset(0.07, 0.25),
+      Offset(0.34, 0.25),
+      Offset(0.34, 0.49),
+      Offset(0.64, 0.49),
+      Offset(0.64, 0.25),
+      Offset(0.93, 0.25),
+      Offset(0.93, 0.73),
+      Offset(0.07, 0.73),
     ],
 
-    // BLOQUE 2
+    // BLOQUE 2 NARANJA
     [
-      const Offset(0, 0),
-      const Offset(1, 0),
-      const Offset(0.8, 1),
-      const Offset(0.2, 0.8),
+      Offset(0.14, 0.505),
+      Offset(0.61, 0.505),
+      Offset(0.61, 0.09),
+      Offset(0.84, 0.09),
+      Offset(0.84, 0.9),
+      Offset(0.14, 0.9),
     ],
 
-    // BLOQUE 3
+    // BLOQUE 3 CIAN
     [
-      const Offset(0.5, 0),
-      const Offset(1, 0.5),
-      const Offset(0.5, 1),
-      const Offset(0, 0.5),
+      Offset(0.07, 0.09),
+      Offset(0.93, 0.09),
+      Offset(0.93, 0.48),
+      Offset(0.63, 0.48),
+      Offset(0.63, 0.91),
+      Offset(0.35, 0.91),
+      Offset(0.35, 0.48),
+      Offset(0.07, 0.48),
     ],
 
-    // BLOQUE 4
+    // BLOQUE 4 VERDE
     [
-      const Offset(0, 0),
-      const Offset(1, 0),
-      const Offset(0.7, 1),
-      const Offset(0.2, 0.8),
+      Offset(0.27, 0.08),
+      Offset(0.73, 0.08),
+      Offset(0.73, 0.34),
+      Offset(0.49, 0.34),
+      Offset(0.49, 0.65),
+      Offset(0.73, 0.65),
+      Offset(0.73, 0.91),
+      Offset(0.27, 0.91),
     ],
 
-    // BLOQUE 5
+    // BLOQUE 5 AMARILLO
     [
-      const Offset(0.5, 0),
-      const Offset(1, 0.5),
-      const Offset(0.5, 1),
-      const Offset(0, 0.5),
+      Offset(0.13, 0.5),
+      Offset(0.38, 0.5),
+      Offset(0.38, 0.08),
+      Offset(0.88, 0.08),
+      Offset(0.88, 0.48),
+      Offset(0.62, 0.48),
+      Offset(0.62, 0.91),
+      Offset(0.13, 0.91),
     ],
 
-    // BLOQUE 6
+    // BLOQUE 6 ROSA
     [
-      const Offset(0, 0),
-      const Offset(1, 0),
-      const Offset(0.5, 1),
+      Offset(0.21, 0.10),
+      Offset(0.78, 0.10),
+      Offset(0.78, 0.5),
+      Offset(0.5, 0.5),
+      Offset(0.5, 0.9),
+      Offset(0.21, 0.9),
     ],
 
-    // BLOQUE 7
+    // BLOQUE 7 MORADO
     [
-      const Offset(0, 0),
-      const Offset(1, 0),
-      const Offset(1, 1),
-      const Offset(0, 1),
+      Offset(0.24, 0.09),
+      Offset(0.76, 0.09),
+      Offset(0.76, 0.91),
+      Offset(0.5, 0.91),
+      Offset(0.5, 0.5),
+      Offset(0.24, 0.5),
     ],
 
-    // BLOQUE 8
+    // BLOQUE 8 AZUL
     [
-      const Offset(0.5, 0),
-      const Offset(1, 1),
-      const Offset(0, 1),
+      Offset(0.5, 0.09),
+      Offset(0.84, 0.09),
+      Offset(0.84, 0.9),
+      Offset(0.15, 0.9),
+      Offset(0.15, 0.5),
+      Offset(0.5, 0.5),
     ],
 
     // BOMBILLA
     [
-      const Offset(0.5, 0),
-      const Offset(0.9, 0.3),
-      const Offset(0.8, 0.8),
-      const Offset(0.5, 1),
-      const Offset(0.2, 0.8),
-      const Offset(0.1, 0.3),
+      Offset(0.13, 0.1),
+      Offset(0.86, 0.1),
+      Offset(0.86, 0.9),
+      Offset(0.13, 0.9),
     ],
   ];
 
-  bool mostrarColisiones = true;
+  // ==========================================
+  // HITBOX DEL MARCO
+  // ==========================================
 
+  final List<Offset> hitboxMarco = [
+    Offset(0.04, 0.04),
+    Offset(0.96, 0.04),
+    Offset(0.96, 0.95),
+    Offset(0.04, 0.95),
+  ];
+
+  bool mostrarColisiones = true;
   int? piezaSeleccionada;
 
-  // CONVERTIR EL CONTORNO A COORDENADAS REALES
+  // ==========================================
+  // CONVERTIR HITBOX A COORDENADAS REALES
+  // ==========================================
+
   List<Offset> obtenerPuntos(
       int indice,
       Offset posicion,
@@ -337,60 +391,171 @@ class _PuzzleState extends State<Puzzle> {
     }).toList();
   }
 
-  // PRODUCTO VECTORIAL
-  double cruz(Offset a, Offset b) {
-    return a.dx * b.dy - a.dy * b.dx;
+  List<Offset> obtenerPuntosMarco() {
+    return hitboxMarco.map((punto) {
+      return Offset(
+        punto.dx * anchoReferencia,
+        punto.dy * altoReferencia,
+      );
+    }).toList();
   }
 
-  // COMPROBAR SI DOS POLÍGONOS SE INTERSECTAN
+  // ==========================================
+  // PUNTO DENTRO DE POLIGONO
+  // ==========================================
+
+  bool puntoDentroPoligono(
+      Offset punto,
+      List<Offset> poligono,
+      ) {
+    bool dentro = false;
+
+    for (int i = 0, j = poligono.length - 1;
+    i < poligono.length;
+    j = i++) {
+
+      final a = poligono[i];
+      final b = poligono[j];
+
+      final cruza =
+          ((a.dy > punto.dy) != (b.dy > punto.dy)) &&
+              (punto.dx <
+                  (b.dx - a.dx) *
+                      (punto.dy - a.dy) /
+                      (b.dy - a.dy) +
+                      a.dx);
+
+      if (cruza) dentro = !dentro;
+    }
+
+    return dentro;
+  }
+
+  // ==========================================
+  // ORIENTACION
+  // ==========================================
+
+  double orientacion(
+      Offset a,
+      Offset b,
+      Offset c,
+      ) {
+    return (b.dx - a.dx) * (c.dy - a.dy) -
+        (b.dy - a.dy) * (c.dx - a.dx);
+  }
+
+  // ==========================================
+  // SEGMENTOS
+  // ==========================================
+
+  bool segmentosSeCruzan(
+      Offset a,
+      Offset b,
+      Offset c,
+      Offset d,
+      ) {
+    const epsilon = 0.000001;
+
+    final o1 = orientacion(a, b, c);
+    final o2 = orientacion(a, b, d);
+    final o3 = orientacion(c, d, a);
+    final o4 = orientacion(c, d, b);
+
+    return (
+        (o1 > epsilon && o2 < -epsilon) ||
+            (o1 < -epsilon && o2 > epsilon)
+    ) && (
+        (o3 > epsilon && o4 < -epsilon) ||
+            (o3 < -epsilon && o4 > epsilon)
+    );
+  }
+
+  // ==========================================
+  // COLISION ENTRE POLIGONOS
+  // ==========================================
+
   bool poligonosColisionan(
       List<Offset> a,
       List<Offset> b,
       ) {
-    final poligonos = [a, b];
 
-    // SAT: Separating Axis Theorem
-    for (final poligono in poligonos) {
-      for (int i = 0; i < poligono.length; i++) {
-        final p1 = poligono[i];
-        final p2 = poligono[(i + 1) % poligono.length];
+    for (int i = 0; i < a.length; i++) {
+      final a1 = a[i];
+      final a2 = a[(i + 1) % a.length];
 
-        final eje = Offset(
-          -(p2.dy - p1.dy),
-          p2.dx - p1.dx,
-        );
+      for (int j = 0; j < b.length; j++) {
+        final b1 = b[j];
+        final b2 = b[(j + 1) % b.length];
 
-        double minA = double.infinity;
-        double maxA = double.negativeInfinity;
-        double minB = double.infinity;
-        double maxB = double.negativeInfinity;
-
-        for (final p in a) {
-          final proyeccion = cruz(eje, p);
-          minA = proyeccion < minA ? proyeccion : minA;
-          maxA = proyeccion > maxA ? proyeccion : maxA;
-        }
-
-        for (final p in b) {
-          final proyeccion = cruz(eje, p);
-          minB = proyeccion < minB ? proyeccion : minB;
-          maxB = proyeccion > maxB ? proyeccion : maxB;
-        }
-
-        if (maxA <= minB || maxB <= minA) {
-          return false;
+        if (segmentosSeCruzan(a1, a2, b1, b2)) {
+          return true;
         }
       }
     }
 
-    return true;
+    for (final punto in a) {
+      if (puntoDentroPoligono(punto, b)) {
+        return true;
+      }
+    }
+
+    for (final punto in b) {
+      if (puntoDentroPoligono(punto, a)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
-  // COMPROBAR COLISIONES
+  // ==========================================
+  // COLISION CON MARCO
+  // ==========================================
+
+  bool fueraDelMarco(
+      int indice,
+      Offset nuevaPosicion,
+      ) {
+
+    final puntos = obtenerPuntos(
+      indice,
+      nuevaPosicion,
+    );
+
+    final marco = obtenerPuntosMarco();
+
+    for (final punto in puntos) {
+      if (!puntoDentroPoligono(punto, marco)) {
+        return true;
+      }
+    }
+
+    for (int i = 0; i < puntos.length; i++) {
+      final a = puntos[i];
+      final b = puntos[(i + 1) % puntos.length];
+
+      for (int j = 0; j < marco.length; j++) {
+        final c = marco[j];
+        final d = marco[(j + 1) % marco.length];
+
+        if (segmentosSeCruzan(a, b, c, d)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  // ==========================================
+  // COLISIONES ENTRE BLOQUES
+  // ==========================================
+
   bool hayColision(
       int indice,
       Offset nuevaPosicion,
       ) {
+
     final nuevosPuntos = obtenerPuntos(
       indice,
       nuevaPosicion,
@@ -415,7 +580,18 @@ class _PuzzleState extends State<Puzzle> {
     return false;
   }
 
-  // CREAR PIEZA ARRASTRABLE
+  bool movimientoValido(
+      int indice,
+      Offset posicion,
+      ) {
+    return !fueraDelMarco(indice, posicion) &&
+        !hayColision(indice, posicion);
+  }
+
+  // ==========================================
+  // BLOQUE ARRASTRABLE
+  // ==========================================
+
   Widget crearBloque(int indice) {
     return Positioned(
       left: posiciones[indice].dx,
@@ -424,6 +600,8 @@ class _PuzzleState extends State<Puzzle> {
       height: tamanos[indice].height,
 
       child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+
         onPanStart: (_) {
           setState(() {
             piezaSeleccionada = indice;
@@ -431,25 +609,30 @@ class _PuzzleState extends State<Puzzle> {
         },
 
         onPanUpdate: (details) {
-          final actual = posiciones[indice];
+          final dx = details.delta.dx / escala;
+          final dy = details.delta.dy / escala;
 
-          final horizontal = Offset(
-            actual.dx + details.delta.dx,
-            actual.dy,
-          );
+          final actual = posiciones[indice];
 
           Offset nueva = actual;
 
-          if (!hayColision(indice, horizontal)) {
+          // MOVIMIENTO HORIZONTAL
+          final horizontal = Offset(
+            actual.dx + dx,
+            actual.dy,
+          );
+
+          if (movimientoValido(indice, horizontal)) {
             nueva = horizontal;
           }
 
+          // MOVIMIENTO VERTICAL
           final vertical = Offset(
             nueva.dx,
-            nueva.dy + details.delta.dy,
+            nueva.dy + dy,
           );
 
-          if (!hayColision(indice, vertical)) {
+          if (movimientoValido(indice, vertical)) {
             nueva = vertical;
           }
 
@@ -468,142 +651,209 @@ class _PuzzleState extends State<Puzzle> {
 
         child: Image.asset(
           imagenes[indice],
+          width: tamanos[indice].width,
+          height: tamanos[indice].height,
           fit: BoxFit.contain,
           alignment: Alignment.center,
         ),
       ),
     );
   }
+  // ==========================================
+  // CONSTRUIR INTERFAZ ADAPTATIVA
+  // ==========================================
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
+    return LayoutBuilder(
+      builder: (context, constraints) {
 
-          // BOTÓN PARA MOSTRAR LOS CONTORNOS
-          ElevatedButton.icon(
-            onPressed: () {
-              setState(() {
-                mostrarColisiones = !mostrarColisiones;
-              });
-            },
-            icon: Icon(
-              mostrarColisiones
-                  ? Icons.visibility
-                  : Icons.visibility_off,
-            ),
-            label: Text(
-              mostrarColisiones
-                  ? 'Ocultar colisiones'
-                  : 'Mostrar colisiones',
-            ),
-          ),
+        // ESPACIO DISPONIBLE
+        final double anchoDisponible = constraints.maxWidth;
+        final double altoDisponible = constraints.maxHeight;
 
-          Expanded(
-            child: Center(
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
+        // ESCALA PROPORCIONAL
+        escala = [
+          anchoDisponible / anchoReferencia,
+          altoDisponible / altoReferencia,
+        ].reduce((a, b) => a < b ? a : b);
 
-                  Image.asset('img/marco.PNG'),
+        // TAMAÑO REAL DEL PUZZLE
+        final double anchoPuzzle = anchoReferencia * escala;
+        final double altoPuzzle = altoReferencia * escala;
 
-                  // NUEVE IMÁGENES ARRASTRABLES
-                  for (int i = 0; i < imagenes.length; i++)
-                    crearBloque(i),
+        return Column(
+          children: [
 
-                  // CONTORNOS DE COLISIÓN
-                  if (mostrarColisiones)
-                    Positioned.fill(
-                      child: IgnorePointer(
-                        child: CustomPaint(
-                          painter: HitboxPainter(
-                            posiciones: posiciones,
-                            tamanos: tamanos,
-                            hitboxes: hitboxes,
-                            piezaSeleccionada: piezaSeleccionada,
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
+            ElevatedButton.icon(
+              onPressed: () {
+                setState(() {
+                  mostrarColisiones = !mostrarColisiones;
+                });
+              },
+              icon: Icon(
+                mostrarColisiones
+                    ? Icons.visibility
+                    : Icons.visibility_off,
+              ),
+              label: Text(
+                mostrarColisiones
+                    ? 'Ocultar colisiones'
+                    : 'Mostrar colisiones',
               ),
             ),
-          ),
-        ],
-      ),
+
+            Expanded(
+              child: Center(
+                child: SizedBox(
+                  width: anchoPuzzle,
+                  height: altoPuzzle,
+
+                  child: FittedBox(
+                    fit: BoxFit.fill,
+                    child: SizedBox(
+                      width: anchoReferencia,
+                      height: altoReferencia,
+
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+
+                          // MARCO
+                          Positioned.fill(
+                            child: Image.asset(
+                              'img/marco.PNG',
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+
+                          // BLOQUES
+                          for (int i = 0;
+                          i < imagenes.length;
+                          i++)
+                            crearBloque(i),
+
+                          // COLISIONES
+                          if (mostrarColisiones)
+                            Positioned.fill(
+                              child: IgnorePointer(
+                                child: CustomPaint(
+                                  painter: HitboxPainter(
+                                    posiciones: posiciones,
+                                    tamanos: tamanos,
+                                    hitboxes: hitboxes,
+                                    hitboxMarco: hitboxMarco,
+                                    piezaSeleccionada:
+                                    piezaSeleccionada,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
 
 
-/// DIBUJA LOS POLÍGONOS DE COLISIÓN
+// ==========================================
+// PAINTER DE COLISIONES
+// ==========================================
+
 class HitboxPainter extends CustomPainter {
+
   final List<Offset> posiciones;
   final List<Size> tamanos;
   final List<List<Offset>> hitboxes;
+  final List<Offset> hitboxMarco;
   final int? piezaSeleccionada;
 
   HitboxPainter({
     required this.posiciones,
     required this.tamanos,
     required this.hitboxes,
+    required this.hitboxMarco,
     required this.piezaSeleccionada,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
 
+    // MARCO
+    final pathMarco = Path();
+
+    for (int i = 0; i < hitboxMarco.length; i++) {
+
+      final punto = Offset(
+        hitboxMarco[i].dx * _PuzzleState.anchoReferencia,
+        hitboxMarco[i].dy * _PuzzleState.altoReferencia,
+      );
+
+      if (i == 0) {
+        pathMarco.moveTo(punto.dx, punto.dy);
+      } else {
+        pathMarco.lineTo(punto.dx, punto.dy);
+      }
+    }
+
+    pathMarco.close();
+
+    canvas.drawPath(
+      pathMarco,
+      Paint()
+        ..color = Colors.red
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3,
+    );
+
+    // BLOQUES
     for (int i = 0; i < hitboxes.length; i++) {
 
-      final puntos = hitboxes[i].map((p) {
+      final puntos = hitboxes[i].map((punto) {
         return Offset(
-          posiciones[i].dx + p.dx * tamanos[i].width,
-          posiciones[i].dy + p.dy * tamanos[i].height,
+          posiciones[i].dx +
+              punto.dx * tamanos[i].width,
+          posiciones[i].dy +
+              punto.dy * tamanos[i].height,
         );
       }).toList();
 
-      final path = Path()
-        ..moveTo(puntos[0].dx, puntos[0].dy);
+      final path = Path();
 
-      for (int j = 1; j < puntos.length; j++) {
-        path.lineTo(puntos[j].dx, puntos[j].dy);
+      for (int j = 0; j < puntos.length; j++) {
+        if (j == 0) {
+          path.moveTo(puntos[j].dx, puntos[j].dy);
+        } else {
+          path.lineTo(puntos[j].dx, puntos[j].dy);
+        }
       }
 
       path.close();
 
-      final paintRelleno = Paint()
-        ..color = Colors.red.withOpacity(0.12)
-        ..style = PaintingStyle.fill;
-
-      final paintBorde = Paint()
-        ..color = piezaSeleccionada == i
-            ? Colors.yellow
-            : Colors.red
-        ..strokeWidth = 3
-        ..style = PaintingStyle.stroke;
-
-      canvas.drawPath(path, paintRelleno);
-      canvas.drawPath(path, paintBorde);
-
-      // DIBUJAR LOS PUNTOS DE CONTROL
-      final paintPunto = Paint()
-        ..color = Colors.blue
-        ..style = PaintingStyle.fill;
-
-      for (final punto in puntos) {
-        canvas.drawCircle(
-          punto,
-          4,
-          paintPunto,
-        );
-      }
+      canvas.drawPath(
+        path,
+        Paint()
+          ..color = piezaSeleccionada == i
+              ? Colors.yellow
+              : Colors.greenAccent
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2,
+      );
     }
   }
 
   @override
-  bool shouldRepaint(covariant HitboxPainter oldDelegate) {
+  bool shouldRepaint(
+      covariant HitboxPainter oldDelegate,
+      ) {
     return true;
   }
 
