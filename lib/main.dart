@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:english_words/english_words.dart';
 
+import 'PantallaFinal.dart';
+import 'PantallaMainMenu.dart';
+import 'PantallaMeterUsuario.dart';
+import 'PantallaRanking.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -58,38 +63,63 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int selectedIndex = 0;
 
+  String usuario = '';
+
+ // int score=0;
+  //GUARDAR LA PUNTUACIÓN
+List<String> ranking=[];
+  //CAMBIAR DE PANTALLA
+  void cambiarPantalla(int index){
+    setState((){
+      selectedIndex=index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget page;
 
     switch (selectedIndex) {
+      //MENU PRINCIPAL
       case 0:
         page = MainMenu(
           //función boton on play
-          onPlay: () {
-            setState(() {
-              selectedIndex = 1;
-            });
-          },
+          onPlay: () => cambiarPantalla(1),
           //funcón boton ranking
-          onRanking: () {
-            setState(() {
-              selectedIndex = 2;
-            });
-          },
+          onRanking: () => cambiarPantalla(4),
         );
         break;
+
       case 1:
-        page = Puzzle(
-          onRanking: () {
+        page = MeterUsuario(
+          onStart:(nombre){
             setState(() {
-              selectedIndex = 2;
-            });
+                          usuario=nombre;
+                          selectedIndex=2;
+                        });
           },
         );
         break;
       case 2:
-        page = const FavoritesPage();
+        page = Puzzle(
+          onFinish:(){
+            setState(() {
+                          ranking.add(usuario);
+                          selectedIndex=3;
+                        });
+          },
+        );
+      case 3:
+        page = FinalPage(
+          usuario:usuario,
+          onRanking:()=>cambiarPantalla(4),
+          onMenu:()=>cambiarPantalla(0),
+        );
+      case 4:
+        page=Pantallaranking(
+          ranking:ranking,
+          onMenu:()=>cambiarPantalla(0),
+        );
         break;
       default:
         page = const MainMenu();
@@ -113,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               ),
               ListTile(
-                title: const Text('PLAY'),
+                title: const Text('USUARIO'),
                 onTap: () {
                   setState(() {
                     selectedIndex = 1;
@@ -122,10 +152,28 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               ),
               ListTile(
-                title: const Text('RANKING'),
+                title: const Text('JUEGO'),
                 onTap: () {
                   setState(() {
                     selectedIndex = 2;
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: const Text('RANKING'),
+                onTap: () {
+                  setState(() {
+                    selectedIndex = 3;
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: const Text('FINAL'),
+                onTap: () {
+                  setState(() {
+                    selectedIndex = 4;
                   });
                   Navigator.pop(context);
                 },
@@ -137,7 +185,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-
+/*
 //https://www.youtube.com/watch?v=6qQvhmlqwY0 botones
 //https://www.youtube.com/watch?v=C2XX8nYT7h0 voidCallback?
 class MainMenu extends StatelessWidget {
@@ -176,6 +224,77 @@ class MainMenu extends StatelessWidget {
     );
   }
 }
+*/
+/*
+class MeterUsuario extends StatefulWidget {
+
+  final Function(String) onStart;
+
+  const MeterUsuario({
+    super.key,
+    required this.onStart,
+  });
+
+  @override
+  State<MeterUsuario> createState() => _MeterUsuarioState();
+}
+
+class _MeterUsuarioState extends State<MeterUsuario> {
+
+  final TextEditingController controlador = TextEditingController();
+
+  @override
+  void dispose() {
+    controlador.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+
+        const Text(
+          'INTRODUCE TU NOMBRE',
+          style: TextStyle(
+            fontSize: 26,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+
+        const SizedBox(height: 25),
+
+        SizedBox(
+          width: 250,
+          child: TextField(
+            controller: controlador,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              hintText: 'Nombre de usuario',
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 25),
+
+        ElevatedButton(
+          onPressed: () {
+
+            String nombre = controlador.text.trim();
+
+            if (nombre.isNotEmpty) {
+              widget.onStart(nombre);
+            }
+          },
+          child: const Text('CONTINUAR'),
+        ),
+      ],
+    );
+  }
+}
+*/
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -620,11 +739,11 @@ class PuzzleMovement {
 
 class Puzzle extends StatefulWidget {
 
-  final VoidCallback? onRanking;
+  final VoidCallback? onFinish;
 
   const Puzzle({
     super.key,
-    this.onRanking,
+    this.onFinish,
   });
 
   @override
@@ -761,7 +880,7 @@ class _PuzzleState extends State<Puzzle> {
       ) {
     if (indice == 8 &&
         colisiones.bombillaEnObjetivo(nuevaPosicion)) {
-      widget.onRanking?.call();
+      widget.onFinish?.call();
     }
   }
 
@@ -1058,7 +1177,7 @@ class HitboxPainter extends CustomPainter {
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-
+/*
 // Página de favoritos
 class FavoritesPage extends StatelessWidget {
   const FavoritesPage({super.key});
@@ -1157,3 +1276,118 @@ class FavoriteIcon extends StatelessWidget {
     );
   }
 }
+
+*/
+/*
+class FinalPage extends StatelessWidget {
+
+  final String usuario;
+  final VoidCallback onRanking;
+  final VoidCallback onMenu;
+
+  const FinalPage({
+    super.key,
+    required this.usuario,
+    required this.onRanking,
+    required this.onMenu,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+
+        const Text(
+          '¡ENHORABUENA!',
+          style: TextStyle(
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+
+        const SizedBox(height: 20),
+
+        Text(
+          '¡$usuario has completado el puzzle!',
+          style: const TextStyle(fontSize: 20),
+        ),
+
+        const SizedBox(height: 40),
+
+        ElevatedButton(
+          onPressed: onRanking,
+          child: const Text('VER RANKING'),
+        ),
+
+        const SizedBox(height: 15),
+
+        ElevatedButton(
+          onPressed: onMenu,
+          child: const Text('VOLVER AL MENÚ'),
+        ),
+      ],
+    );
+  }
+}
+*/
+/*
+class RankingPage extends StatelessWidget {
+
+  final List<String> ranking;
+  final VoidCallback onMenu;
+
+  const RankingPage({
+    super.key,
+    required this.ranking,
+    required this.onMenu,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Column(
+      children: [
+
+        const SizedBox(height: 30),
+
+        const Text(
+          'RANKING',
+          style: TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+
+        const SizedBox(height: 20),
+
+        Expanded(
+          child: ranking.isEmpty
+              ? const Center(
+            child: Text('Todavía no hay jugadores.'),
+          )
+              : ListView.builder(
+            itemCount: ranking.length,
+            itemBuilder: (context, index) {
+
+              return Card(
+                child: ListTile(
+                  leading: Text('${index + 1}º'),
+                  title: Text(ranking[index]),
+                ),
+              );
+            },
+          ),
+        ),
+
+        ElevatedButton(
+          onPressed: onMenu,
+          child: const Text('VOLVER AL MENÚ'),
+        ),
+
+        const SizedBox(height: 20),
+      ],
+    );
+  }
+}*/
