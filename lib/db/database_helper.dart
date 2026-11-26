@@ -1,15 +1,19 @@
+import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 class DatabaseHelper {
-  static final DatabaseHelper instance =
-  DatabaseHelper._init();
+  static final DatabaseHelper instance = DatabaseHelper._init();
+
   static Database? _database;
-  DatabaseHelper._init();
+
+  DatabaseHelper._init() {}
+
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDB('inventory.db');
     return _database!;
   }
+
   Future<Database> _initDB(String fileName) async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, fileName);
@@ -19,58 +23,60 @@ class DatabaseHelper {
       onCreate: _createDB,
     );
   }
+
   Future<void> _createDB(
       Database db,
       int version,
       ) async {
     await db.execute('''
 CREATE TABLE inventory(
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-itemName TEXT NOT NULL,
-quantity INTEGER NOT NULL
+  userName TEXT NOT NULL PRIMARY KEY,
+  moves INTEGER NOT NULL
 )
 ''');
   }
-  Future<int> insertItem(
-      String itemName,
-      int quantity,
+
+  Future<int> insertUser(
+      String userName
       ) async {
     final db = await database;
     return await db.insert(
       'inventory',
       {
-        'itemName': itemName,
-        'quantity': quantity,
+        'userName': userName,
+        'moves': 0,
       },
     );
   }
+
   Future<List<Map<String, dynamic>>> getItems() async {
     final db = await database;
+
     return await db.query(
       'inventory',
-      orderBy: 'itemName',
+      orderBy: 'moves ASC',
     );
   }
-  Future<int> updateItem(
-      int id,
-      int quantity,
-      ) async {
+
+  Future<int> updateItem(String userName, int moves)
+  async {
     final db = await database;
     return await db.update(
       'inventory',
-      {'quantity': quantity},
-      where: 'id = ?',
-      whereArgs: [id],
+      {'moves': moves},
+      where: 'userName = ?',
+      whereArgs: [userName],
     );
   }
+
   Future<int> deleteItem(
-      int id,
+      String userName,
       ) async {
     final db = await database;
     return await db.delete(
       'inventory',
-      where: 'id = ?',
-      whereArgs: [id],
+      where: 'userName = ?',
+      whereArgs: [userName],
     );
   }
 }
