@@ -1,9 +1,9 @@
-import 'package:flutter/widgets.dart';
+
 import 'package:flutter/material.dart';
 
 class Pantallaranking extends StatelessWidget {
 
-  final List<String> ranking;
+  final List<Map<String, dynamic>> ranking;
   final VoidCallback onMenu;
 
   const Pantallaranking({
@@ -39,10 +39,15 @@ class Pantallaranking extends StatelessWidget {
             itemCount: ranking.length,
             itemBuilder: (context, index) {
 
+              final usuario = ranking[index];
+
               return Card(
                 child: ListTile(
                   leading: Text('${index + 1}º'),
-                  title: Text(ranking[index]),
+                  title: Text(usuario['userName']),
+                  trailing: Text(
+                    '${usuario['moves']} movimientos',
+                  ),
                 ),
               );
             },

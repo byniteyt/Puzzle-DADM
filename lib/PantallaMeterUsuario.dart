@@ -1,6 +1,7 @@
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
+import 'db/database_helper.dart';
 
 class MeterUsuario extends StatefulWidget {
 
@@ -26,15 +27,29 @@ class _MeterUsuarioState extends State<MeterUsuario> {
   }
 
   //Solo se puede jugar si se ha metido un nombre de usuario
-@override
-void continuar() {
-final nombre=controlador.text.trim();
 
-if(nombre.isNotEmpty){
+void continuar() async {
+  final nombre = controlador.text.trim();
+
+  if (nombre.isEmpty) return;
+
+  await GetUserByName(nombre);
+
+  debugPrint('Entrando a sala...');
   widget.onStart(nombre);
 }
 
-}
+  Future<void> GetUserByName(String nombre) async {
+    final user = await DatabaseHelper.instance.getUser(nombre);
+    debugPrint('Busqueda de user acabada');
+    if (user == null) {
+      debugPrint('Creando user');
+      await DatabaseHelper.instance.insertUser(nombre);
+      debugPrint('User creado');
+    }
+
+    print('User asegurado');
+  }
 
   @override
   Widget build(BuildContext context) {
