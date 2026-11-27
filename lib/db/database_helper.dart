@@ -1,15 +1,16 @@
-import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
 
   static Database? _database;
 
-  DatabaseHelper._init() {}
+  DatabaseHelper._init();
 
   Future<Database> get database async {
     if (_database != null) return _database!;
+
     _database = await _initDB('inventory.db');
     return _database!;
   }
@@ -17,6 +18,7 @@ class DatabaseHelper {
   Future<Database> _initDB(String fileName) async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, fileName);
+
     return await openDatabase(
       path,
       version: 1,
@@ -24,28 +26,25 @@ class DatabaseHelper {
     );
   }
 
-  Future<void> _createDB(
-      Database db,
-      int version,
-      ) async {
+  Future<void> _createDB(Database db, int version) async {
     await db.execute('''
-CREATE TABLE inventory(
-  userName TEXT NOT NULL PRIMARY KEY,
-  moves INTEGER NOT NULL
-)
-''');
+      CREATE TABLE inventory(
+        userName TEXT NOT NULL PRIMARY KEY,
+        moves INTEGER NOT NULL
+      )
+    ''');
   }
 
-  Future<int> insertUser(
-      String userName
-      ) async {
+  Future<int> insertUser(String userName) async {
     final db = await database;
+
     return await db.insert(
       'inventory',
       {
         'userName': userName,
         'moves': 0,
       },
+      conflictAlgorithm: ConflictAlgorithm.ignore,
     );
   }
 
@@ -58,9 +57,9 @@ CREATE TABLE inventory(
     );
   }
 
-  Future<int> updateItem(String userName, int moves)
-  async {
+  Future<int> updateItem(String userName, int moves) async {
     final db = await database;
+
     return await db.update(
       'inventory',
       {'moves': moves},
@@ -69,10 +68,9 @@ CREATE TABLE inventory(
     );
   }
 
-  Future<int> deleteItem(
-      String userName,
-      ) async {
+  Future<int> deleteItem(String userName) async {
     final db = await database;
+
     return await db.delete(
       'inventory',
       where: 'userName = ?',
