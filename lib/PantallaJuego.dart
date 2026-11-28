@@ -409,6 +409,8 @@ class _PuzzleState extends State<Puzzle> {
   late final PuzzleMovement movimiento;
 
   bool mostrarColisiones = true;
+  int movimientos = 0; //contador movimientos
+  bool movimientoContado = false; //bool para la cuenta
   int? piezaSeleccionada;
   final GlobalKey puzzleKey = GlobalKey();
   Offset desplazamientoAgarre = Offset.zero;
@@ -434,11 +436,11 @@ class _PuzzleState extends State<Puzzle> {
   }
 
   void iniciarArrastre(
-    int indice,
-    DragStartDetails details,
-  ) {
+      int indice,
+      DragStartDetails details,
+      ) {
     final RenderBox caja =
-        puzzleKey.currentContext!.findRenderObject() as RenderBox;
+    puzzleKey.currentContext!.findRenderObject() as RenderBox;
 
     final punto = caja.globalToLocal(details.globalPosition);
 
@@ -451,6 +453,7 @@ class _PuzzleState extends State<Puzzle> {
       setState(() {
         piezaSeleccionada = indice;
         desplazamientoAgarre = punto - posiciones[indice];
+        movimientoContado = false; //reiniciar el booleano para poder volver a contar
       });
     }
   }
@@ -489,6 +492,10 @@ class _PuzzleState extends State<Puzzle> {
     if (nueva != actual) {
       setState(() {
         posiciones[indice] = nueva;
+        if (!movimientoContado) {
+          movimientos++; //sumar al contador
+          movimientoContado = true;// 'dirty flag' para evitar problemas de conteo
+        }
       });
 
       comprobarVictoria(indice, nueva);
@@ -603,7 +610,16 @@ class _PuzzleState extends State<Puzzle> {
       ),
     );
   }
-
+  //el contador de los movimientos en pantalla
+  Widget construirContadorMovimientos() {
+    return Text(
+      'Movimientos: $movimientos',
+      style: const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -621,7 +637,16 @@ class _PuzzleState extends State<Puzzle> {
 
         return Column(
           children: [
-            construirBotonColisiones(),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  construirContadorMovimientos(),
+                  construirBotonColisiones(),
+                ],
+              ),
+            ),
             Expanded(
               child: Center(
                 child: construirTablero(
