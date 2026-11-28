@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:english_words/english_words.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 
 import 'PantallaFinal.dart';
 import 'PantallaJuego.dart';
 import 'PantallaMainMenu.dart';
 import 'PantallaMeterUsuario.dart';
 import 'PantallaRanking.dart';
+import 'db/database_helper.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  if (kIsWeb) {
+    databaseFactory = databaseFactoryFfiWeb;
+  }
+
   runApp(const MyApp());
 }
 
@@ -61,8 +72,15 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int selectedIndex = 0;
   String usuario = '';
-  List<String> ranking = [];
+  List<Map<String, dynamic>> ranking = [];
 
+  Future<void> cargarRanking() async {
+    final usuarios = await DatabaseHelper.instance.getUsers();
+
+    setState(() {
+      ranking = usuarios;
+    });
+  }
   void cambiarPantalla(int index) {
     setState(() {
       selectedIndex = index;
@@ -77,7 +95,10 @@ class _MyHomePageState extends State<MyHomePage> {
       case 0:
         page = MainMenu(
           onPlay: () => cambiarPantalla(1),
-          onRanking: () => cambiarPantalla(4),
+            onRanking: () async {
+              await cargarRanking();
+              cambiarPantalla(4);
+            },
         );
         break;
 
@@ -94,9 +115,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
       case 2:
         page = Puzzle(
-          onFinish: () {
+          onFinish: () async {
+
+            final usuarios = await DatabaseHelper.instance.getUsers();
+
             setState(() {
-              ranking.add(usuario);
+              ranking = usuarios;
               selectedIndex = 3;
             });
           },
@@ -106,7 +130,10 @@ class _MyHomePageState extends State<MyHomePage> {
       case 3:
         page = FinalPage(
           usuario: usuario,
-          onRanking: () => cambiarPantalla(4),
+          onRanking: () async {
+            await cargarRanking();
+            cambiarPantalla(4);
+          },
           onMenu: () => cambiarPantalla(0),
         );
         break;

@@ -11,7 +11,7 @@ class DatabaseHelper {
   Future<Database> get database async {
     if (_database != null) return _database!;
 
-    _database = await _initDB('inventory.db');
+    _database = await _initDB('Users.db');
     return _database!;
   }
 
@@ -28,7 +28,7 @@ class DatabaseHelper {
 
   Future<void> _createDB(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE inventory(
+      CREATE TABLE Users(
         userName TEXT NOT NULL PRIMARY KEY,
         moves INTEGER NOT NULL
       )
@@ -39,7 +39,7 @@ class DatabaseHelper {
     final db = await database;
 
     return await db.insert(
-      'inventory',
+      'Users',
       {
         'userName': userName,
         'moves': 0,
@@ -48,31 +48,48 @@ class DatabaseHelper {
     );
   }
 
-  Future<List<Map<String, dynamic>>> getItems() async {
+  Future<List<Map<String, dynamic>>> getUsers() async {
     final db = await database;
 
     return await db.query(
-      'inventory',
+      'Users',
       orderBy: 'moves ASC',
     );
   }
 
-  Future<int> updateItem(String userName, int moves) async {
+  Future<Map<String, dynamic>?> getUser(String userName) async {
+    final db = await database;
+
+    final result = await db.query(
+      'Users',
+      where: 'userName = ?',
+      whereArgs: [userName],
+      limit: 1,
+    );
+
+    if (result.isNotEmpty) {
+      return result.first;
+    }
+
+    return null;
+  }
+
+  Future<int> updateUser(String userName, int moves) async {
     final db = await database;
 
     return await db.update(
-      'inventory',
+      'Users',
       {'moves': moves},
       where: 'userName = ?',
       whereArgs: [userName],
     );
   }
 
-  Future<int> deleteItem(String userName) async {
+  Future<int> deleteUser(String userName) async {
     final db = await database;
 
     return await db.delete(
-      'inventory',
+      'Users',
       where: 'userName = ?',
       whereArgs: [userName],
     );
